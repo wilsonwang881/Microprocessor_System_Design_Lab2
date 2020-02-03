@@ -165,6 +165,8 @@ Experiment & Description                      \\ \midrule
 \caption{Experiments for lab session 2.}
 \end{table}
 
+Students are expected to be able to import IPs and configure them properly according to the requirement.
+
 \section{Procedure}
 
 \section{Results}
@@ -173,7 +175,7 @@ Experiment & Description                      \\ \midrule
 
 Q: In the first part of the lab, we created a delay function by implementing a counter. The goal was to update the LEDs approximately every second as we did in the previous lab. Compare the count value in this lab to the count value you used as a delay in the previous lab. If they are different, explain why? Can you determine approximately how many clock cycles are required to execute one iteration of the delay for-loop? If so, how many?
 
-A:
+A: The count value used in the delay function in this lab is 10000000 as in the previous lab, the number is 125000000. The value used in this lab is smaller than the one used in the previous lab. In the previous lab, 
 
 Q: Why is the count variable in our software delay declared as volatile?
 
@@ -181,11 +183,13 @@ A:
 
 Q: What does the while(1) expression in our code do?
 
-A:
+A: It is an infinite loop that executes the code in the loop infinitely many times until the program is terminated by the user or due to exceptions. We place our code, i.e. increment the counter, display the counter value on LED and print counter value in the terminal, or as described in the second part of the lab, for handling switch and button events, in the infinite loop.
 
-Q: Compare and contrast this lab with the previous lab.Which implementation do you feel iseasier? What are the advantages and disadvantages associated with a purely software implementation such as this when compared to a purely hardware implementation such as the previous lab?
+Q: Compare and contrast this lab with the previous lab. Which implementation do you feel is easier? What are the advantages and disadvantages associated with a purely software implementation such as this when compared to a purely hardware implementation such as the previous lab?
 
-A:
+A: The implementation in this lab feels easier. The advantages of using software approach is the rich library ecosystem available to use, though Verilog does have libraries, C libraries are much easier to use for a person like me who has some experience with coding but not so much with hardware design. The logic behind C programming is sequential while in Verilog, parallel operations can exist, which makes it difficult to understand and debug. Verilog does not have data types like int or char but pure bytes. Coding in pure bytes instead of meaningful data types can be difficult to understand intuitively.
+
+The disadvantage of using purely software approach is such approach relies on a mature processor system such as the Microblaze soft processor running on FPGA. Without such processor, a purely software implementation is impossible as it lacks the ability to communicate with the hardware. A software approach can consume a significant chunk of the hardware resource available on the FPGA board, even the software is very simple and does not require a powerful processor to run. A purely hardware approach can reduce the resource usage since it does not require a complicated soft processor. Since a software approach needs a processor, the setup process can be prone to errors compared with a hardware approach, which involves fewer steps to setup and run.
 
 \newpage
 
