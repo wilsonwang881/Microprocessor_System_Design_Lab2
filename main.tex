@@ -24,9 +24,9 @@
 \definecolor{vblue}{RGB}{49,49,255}
 \definecolor{vorange}{RGB}{255,143,102}
 
-\lstdefinestyle{verilog-style}
+\lstdefinestyle{C-style}
 {
-    language=Verilog,
+    language=C,
     basicstyle=\small\ttfamily,
     keywordstyle=\color{vblue},
     identifierstyle=\color{black},
@@ -150,7 +150,7 @@
 
 \newpage
 
-\section{Introduction}
+\part{Introduction}
 
 The second lab session for ECEN 749 aims at familiarizing the students with the operation of running C program on a processor that is running on FPGA. The lab uses the Xilinx Vivado Design Suite to design the hardware and the Xilinx SDK to program FPGA and run C program on FPGA after FPGA has been configured according to the hardware design. The lab consists of two experiments:
 
@@ -167,33 +167,183 @@ Experiment & Description                      \\ \midrule
 
 Students are expected to be able to import IPs and configure them properly according to the requirement.
 
-\section{Procedure}
+\part{Procedure}
 
-\section{Results}
+\section{LED Counter with Console Log}
 
-\section{Conclusion}
+\begin{enumerate}
+    \item Create a new folder for the experiment and launch Vivado.
+    
+    \item Create a new project in Vivado. Do not add a source file but add a block design.
+    
+    \item Add the \textbf{MicroBlaze processor} via the adding IP procedure. Configure the \textbf{MicroBlaze processor} according to the following table:
+    
+    \begin{table}[ht]
+    \centering
+    \begin{tabular}{@{}ll@{}}
+    \toprule
+    Local Memory         & 64 KB                        \\ \midrule
+    Local Memory ECC     & None                         \\ \midrule
+    Cache Configuration  & None                         \\ \midrule
+    Debug Module         & Debug \& UART                \\ \midrule
+    Peripheral AXI Port  & Enabled                      \\ \midrule
+    Interrupt Controller & Uncheck                      \\ \midrule
+    Clock Connection     & New Clocking Wizard (100MHz) \\ \bottomrule
+    \end{tabular}
+    \caption{MicroBlaze processor configuration.}
+    \end{table}
+    
+    \item Run block automation.
+    
+    \item Configure the \textbf{Clocking Wizard} block to \textbf{Single ended clock capable pin}.
+    
+    \item Run connection automation.
+    
+    \item Add a GPIO block of 4-bit width for outputs. Run connection automation to connect the new block to the rest of the system. Rename the GPIO block to \textbf{led}.
+    
+    \item Replace the block connected to the reset port named \textbf{reset} in \textbf{Clocking Wizard} block with a \textbf{Constant} IP block configured to 1-bit wide and hold the value of 0. Name the \textbf{Constant} block \textbf{GND}.
+    
+    \item Replace the block connected to the reset port named \textbf{ext\_reset\_in} in \textbf{Processor System Reset} block with a \textbf{Constant} IP block configured to 1-bit wide and hold the value of 1. Name the \textbf{Constant} block \textbf{VDD}.
+    
+    \item Regenerate layout. The final layout should look like the following picture:
+    
+    \begin{figure}[ht]
+    \centering
+    \includegraphics[width=\textwidth]{Ex1_layout.png}
+    \caption{Block design for experiment 1.}
+    \end{figure}
+    
+    \item Add the \textit{xdc} constraint file to the design. The file is available on eCampus.
+    
+    \item Validate design. 
+    
+    \item Create HDL wrapper. 
+    
+    \item Generate bitstream.
+    
+    \item Export the hardware design, including the bitstream.
+    
+    \item Launch SDK. Create an empty \textbf{Application Project}. Add the source code written in C, available on eCampus, to the project.
+    
+    \item Program FPGA using SDK and run the C program. Create a new run configuration that uses the \textbf{JTAG UART} port before running the program.
+ 
+\end{enumerate}
 
-Q: In the first part of the lab, we created a delay function by implementing a counter. The goal was to update the LEDs approximately every second as we did in the previous lab. Compare the count value in this lab to the count value you used as a delay in the previous lab. If they are different, explain why? Can you determine approximately how many clock cycles are required to execute one iteration of the delay for-loop? If so, how many?
+\newpage
 
-A: The count value used in the delay function in this lab is 10000000 as in the previous lab, the number is 125000000. The value used in this lab is smaller than the one used in the previous lab. In the previous lab, 
+\section{GPIO Operations with Console Log}
 
-Q: Why is the count variable in our software delay declared as volatile?
+\begin{enumerate}
+    \item Create a Vivado project with the same hardware design from experiment 1.
+    
+    \item In the block diagram editor, add a new GPIO IP block with 8-bit width inputs. Rename the block to \textbf{sw\_buttons}.
+    
+    \begin{figure}[ht]
+    \centering
+    \includegraphics[width=\textwidth]{Ex2_layout.png}
+    \caption{Block design for experiment 1.}
+    \end{figure}
+    
+    \item Run connection automation.
+    
+    \item Add the \textit{xdc} constraint file available in \textbf{Appendix} \ref{appendix:GPIO_xdc} to the design project.
+    
+    \item Repeat the procedures for exporting designs, HDL wrapper and bitstream. Launch Xilinx SDK and create a new \textbf{Application Project}.
+    
+    \item Add the code in \textbf{Appendix} \ref{appendix:GPIO_c} to the application project in SDK. If unsure about the name of the variables used in C code, refer to \textbf{xparameter.h}. If unsure about the function to use for reading button and switch status, refer to \textbf{xgpio.h}.
+    
+    \item Program FPGA and run the code. 
+    
+\end{enumerate}
 
-A:
+\newpage
 
-Q: What does the while(1) expression in our code do?
+\part{Results}
+
+\section{LED Counter with Console Log}
+
+The LEDs count from 0 to 15 at an increment speed of approximately 1 second. The console logs the current LED state in hex-decimal format.
+
+\begin{figure}[h!]
+\centering
+    \begin{subfigure}{0.49\textwidth}
+        \includegraphics[width=\linewidth]{Lab1_Hardware_Usage.png} 
+        \caption{Lab 1 LED counter experiment hardware usage.}
+    \end{subfigure}
+    \begin{subfigure}{0.49\textwidth}
+        \includegraphics[width=\linewidth]{Lab2_Hardware_Usage.png}
+        \caption{Lab 2 LED counter experiment hardware usage.}
+    \end{subfigure}
+    \caption{Lab 1 and 2 LED counter experiment hardware usage comparison.}
+    \label{hardware_comparison}
+\end{figure}
+
+As we can see from Figure \ref{hardware_comparison}, a software approach uses much more hardware resource compared with a hardware approach when trying to do the LED counter example.
+
+\newpage
+
+\section{GPIO Operations with Console Log}
+
+The system operates as expected. When pressing button 0, the count value increases at approximately 1Hz. When pressing button 1, the count value decreases at approximately 1Hz. To display switch status in the terminal, press button 2. To display the count value on LEDs, press button 3.
+
+\begin{figure}[ht]
+\centering
+    \begin{subfigure}[]{0.45\textwidth}
+        \includegraphics[width=\linewidth]{Btn0.png} 
+        \caption{Console output for button 0.}
+    \end{subfigure}
+    \begin{subfigure}[]{0.45\textwidth}
+        \includegraphics[width=\linewidth]{Btn1.png}
+        \caption{Console output for button 1.}
+    \end{subfigure}
+    \begin{subfigure}[]{0.45\textwidth}
+        \includegraphics[width=\linewidth]{Btn2.png} 
+        \caption{Console output for button 2.}
+    \end{subfigure}
+    \begin{subfigure}[]{0.45\textwidth}
+        \includegraphics[width=\linewidth]{Btn3.png}
+        \caption{Console output for button 3.}
+    \end{subfigure}
+    \caption{Corresponding console output for pressing buttons.}
+\end{figure}
+
+When any of the buttons are pressed, the corresponding action is printed in the terminal as well as the LED value.
+
+\newpage
+
+\part{Conclusion}
+
+In the example of LED counter, a software approach that needs a MicroBlaze soft processor may need much more hardware resource compared with a direct hardware implementation using Verilog.
+
+\textbf{Q: In the first part of the lab, we created a delay function by implementing a counter. The goal was to update the LEDs approximately every second as we did in the previous lab. Compare the count value in this lab to the count value you used as a delay in the previous lab. If they are different, explain why? Can you determine approximately how many clock cycles are required to execute one iteration of the delay for-loop? If so, how many?}
+
+A: The count value used in the delay function in this lab is 10,000,000 as in the previous lab, the number is 125,000,000. The value used in this lab is smaller. In the previous lab, the count value is the same as the system clock frequency as the hardware is designed to do something per clock cycle. While in this lab, there is one intermediate layer, the MicroBlaze processor. The lines of code that increment the count value do not take exactly one clock cycle to run. Based on the ratio of $ 125000000/10000000 = 12.5 $, approximately 12 or 13 clock cycles are required to execute one iteration of the delay loop.
+
+\textbf{Q: Why is the count variable in our software delay declared as volatile?}
+
+A: To prevent optimization by the compiler. The count variable is forced to to initialize to zero and do the increment process every time the program calls the delay function. In the case of compiler optimization, the count variable may stay at its maximum value and do not increment every time the program calls the delay function.
+
+\textbf{Q: What does the while(1) expression in our code do?}
 
 A: It is an infinite loop that executes the code in the loop infinitely many times until the program is terminated by the user or due to exceptions. We place our code, i.e. increment the counter, display the counter value on LED and print counter value in the terminal, or as described in the second part of the lab, for handling switch and button events, in the infinite loop.
 
-Q: Compare and contrast this lab with the previous lab. Which implementation do you feel is easier? What are the advantages and disadvantages associated with a purely software implementation such as this when compared to a purely hardware implementation such as the previous lab?
+\textbf{Q: Compare and contrast this lab with the previous lab. Which implementation do you feel is easier? What are the advantages and disadvantages associated with a purely software implementation such as this when compared to a purely hardware implementation such as the previous lab?}
 
 A: The implementation in this lab feels easier. The advantages of using software approach is the rich library ecosystem available to use, though Verilog does have libraries, C libraries are much easier to use for a person like me who has some experience with coding but not so much with hardware design. The logic behind C programming is sequential while in Verilog, parallel operations can exist, which makes it difficult to understand and debug. Verilog does not have data types like int or char but pure bytes. Coding in pure bytes instead of meaningful data types can be difficult to understand intuitively.
 
-The disadvantage of using purely software approach is such approach relies on a mature processor system such as the Microblaze soft processor running on FPGA. Without such processor, a purely software implementation is impossible as it lacks the ability to communicate with the hardware. A software approach can consume a significant chunk of the hardware resource available on the FPGA board, even the software is very simple and does not require a powerful processor to run. A purely hardware approach can reduce the resource usage since it does not require a complicated soft processor. Since a software approach needs a processor, the setup process can be prone to errors compared with a hardware approach, which involves fewer steps to setup and run.
+The disadvantage of using purely software approach is such approach relies on a mature processor system such as the MicroBlaze soft processor running on FPGA. Without such processor, a purely software implementation is impossible as it lacks the ability to communicate with the hardware. A software approach can consume a significant chunk of the hardware resource available on the FPGA board, even the software is very simple and does not require a powerful processor to run. A purely hardware approach can reduce the resource usage since it does not require a complicated soft processor. Since a software approach needs a processor, the setup process can be prone to errors compared with a hardware approach, which involves fewer steps to setup and run.
 
 \newpage
 
 \begin{appendices}
+
+\section{GPIO\_op.xdc}
+\label{appendix:GPIO_xdc}
+\lstinputlisting[style={txt-style}]{GPIO_op_xdc.txt}
+
+\section{GPIO\_op.c}
+\label{appendix:GPIO_c}
+\lstinputlisting[style={C-style}]{GPIO_op.c}
 
 \end{appendices}
 
