@@ -152,7 +152,7 @@
 
 \part{Introduction}
 
-The second lab session for ECEN 749 aims at familiarizing the students with the operation of running C program on a processor that is running on FPGA. The lab uses the Xilinx Vivado Design Suite to design the hardware and the Xilinx SDK to program FPGA and run C program on FPGA after FPGA has been configured according to the hardware design. The lab consists of two experiments:
+The second lab session for ECEN 749 aims at familiarizing the students with the operation of running C program on a processor that is running on FPGA. The lab consists of two experiments:
 
 \begin{table}[ht]
 \centering
@@ -165,7 +165,7 @@ Experiment & Description                      \\ \midrule
 \caption{Experiments for lab session 2.}
 \end{table}
 
-Students are expected to be able to import IPs and configure them properly according to the requirement.
+Students are expected to be able to import IPs in their hardware design and configure them properly according to the requirement.
 
 \part{Procedure}
 
@@ -246,9 +246,15 @@ Students are expected to be able to import IPs and configure them properly accor
     
     \item Run connection automation.
     
-    \item Add the \textit{xdc} constraint file available in \textbf{Appendix} \ref{appendix:GPIO_xdc} to the design project.
+    \item Run regenerate layout to make the block design look neater.
     
-    \item Repeat the procedures for exporting designs, HDL wrapper and bitstream. Launch Xilinx SDK and create a new \textbf{Application Project}.
+    \item Add the \textit{xdc} constraint file available in \textbf{Appendix} \ref{appendix:GPIO_xdc} to the design project. The constraint is written based on the GPIO blocks imported to the block design and the schematics of the board.
+    
+    \item Repeat the procedures for generating HDL wrapper and bitstream. 
+    
+    \item Export the hardware design, including the bitstream.
+    
+    \item Launch Xilinx SDK and create a new \textbf{Application Project}.
     
     \item Add the code in \textbf{Appendix} \ref{appendix:GPIO_c} to the application project in SDK. If unsure about the name of the variables used in C code, refer to \textbf{xparameter.h}. If unsure about the function to use for reading button and switch status, refer to \textbf{xgpio.h}.
     
@@ -312,6 +318,8 @@ When any of the buttons are pressed, the corresponding action is printed in the 
 \newpage
 
 \part{Conclusion}
+
+To add support for peripheral devices such as buttons and switches, first refer to the schematics of the board to find out the port number. Then add the port number to the \textit{xdc} constraint file. The name of the port, not port number, should be consistent with the name of the block, i.e. the GPIO block, used in the block design editor. Those names will show up in the \textbf{xparameter.h} file after the HDL wrapper, the bitstream and the hardware has been created and exported.
 
 In the example of LED counter, a software approach that needs a MicroBlaze soft processor may need much more hardware resource compared with a direct hardware implementation using Verilog.
 
